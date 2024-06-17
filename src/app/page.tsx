@@ -13,7 +13,7 @@ export default function Home() {
             width={300}
             quality={100}
             priority
-            className="max-h-[3rem]"
+            className="max-h-[2.5rem] md:max-h-[3rem]"
           />
         </figure>
         <span className="mx-2 md:mx-5 text-lg font-bold">X</span>
