@@ -4,7 +4,7 @@ import InfluncerForm from "@/components/influncerForm";
 export default function Home() {
   return (
     <main className="container">
-      <nav className="flex items-center justify-center py-4 md:py-7">
+      <nav className="flex items-center justify-center py-5 md:py-7">
         <figure>
           <Image
             src="/images/breakaway_logo.png"
@@ -28,7 +28,7 @@ export default function Home() {
           />
         </figure>
       </nav>
-      <section className="flex items-center justify-center gap-3 flex-col text-center my-5 md:my-10 lg:max-w-[70%] mx-auto">
+      <section className="flex items-center justify-center gap-3 flex-col text-center my-4 md:my-10 lg:max-w-[70%] mx-auto">
         <h1 className="text-2xl font-extrabold leading-tight tracking-wide md:mb-3">
           Become an Influencer For <br /> Breakaway x Mifu
         </h1>
