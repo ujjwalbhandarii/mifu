@@ -41,10 +41,10 @@ export default function InfluencerForm({ campaignId }: { campaignId: string }) {
     },
   });
 
-  const { fields: customFields } = useFieldArray({
-    name: "custom_fields",
-    control,
-  });
+  //   const { fields: customFields } = useFieldArray({
+  //     name: "custom_fields",
+  //     control,
+  //   });
 
   async function formSubmitFn(data: any) {
     const formattedData: InfluencerCampaignForm = {
