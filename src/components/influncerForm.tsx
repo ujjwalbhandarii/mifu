@@ -1,25 +1,68 @@
+"use client";
+
 import Image from "next/image";
+import { useForm, useFieldArray } from "react-hook-form";
+
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { InfluencerCampaignForm } from "@/lib/api";
 
-export default function InfluncerForm() {
+export default function InfluncerForm({
+  campaignFormFields,
+}: {
+  campaignFormFields: InfluencerCampaignForm;
+}) {
+  const { register, handleSubmit, control } = useForm<InfluencerCampaignForm>({
+    defaultValues: {
+      default_fields: [],
+      socials: [],
+      custom_fields: campaignFormFields.custom_fields,
+    },
+  });
+
+  // console.log(campaignFormFields);
+
+  const { fields } = useFieldArray({
+    name: "custom_fields",
+    control,
+  });
+
+  async function formSubmitFn(data: InfluencerCampaignForm) {
+    console.log(data);
+  }
+
   return (
-    <form className="flex flex-col gap-6 md:gap-7 mx-auto lg:w-[60%] my-10 md:my-20">
+    <form
+      className="flex flex-col gap-6 md:gap-7 mx-auto lg:w-[60%] my-10 md:my-20"
+      onSubmit={handleSubmit(formSubmitFn)}
+    >
       <h2 className="text-base font-semibold">Apply Now</h2>
 
       <div>
         <InputHeading>Name</InputHeading>
-        <Input placeholder="Your Name" type="text" />
+        <Input
+          placeholder="Your Name"
+          type="text"
+          {...register("default_fields.0.")}
+        />
       </div>
 
       <div>
         <InputHeading>Email</InputHeading>
-        <Input placeholder="Your email" type="email" />
+        <Input
+          placeholder="Your email"
+          type="email"
+          {...register("default_fields.1")}
+        />
       </div>
 
       <div>
         <InputHeading>Phone Number</InputHeading>
-        <Input placeholder="Your phone number" type="tel" />
+        <Input
+          placeholder="Your phone number"
+          type="tel"
+          {...register("default_fields.2")}
+        />
       </div>
 
       <div>
@@ -40,6 +83,7 @@ export default function InfluncerForm() {
                 placeholder="Instagram Username"
                 type="text"
                 className="px-9"
+                {...register("socials.0")}
               />
               <AtherateSymbol />
             </div>
@@ -60,6 +104,7 @@ export default function InfluncerForm() {
                 placeholder="Tiktok Username"
                 type="text"
                 className="px-9"
+                {...register("socials.1")}
               />
               <AtherateSymbol />
             </div>
@@ -80,6 +125,7 @@ export default function InfluncerForm() {
                 placeholder="Twitter Username"
                 type="text"
                 className="px-9"
+                {...register("socials.2")}
               />
               <AtherateSymbol />
             </div>
@@ -100,6 +146,7 @@ export default function InfluncerForm() {
                 placeholder="Youtube Username"
                 type="text"
                 className="px-9"
+                {...register("socials.3")}
               />
               <AtherateSymbol />
             </div>
@@ -107,7 +154,18 @@ export default function InfluncerForm() {
         </div>
       </div>
 
-      <div>
+      {fields.map((field, index) => (
+        <div key={field.id}>
+          <InputHeading>{field.question}</InputHeading>
+          <Input
+            placeholder="Your answer"
+            type="text"
+            {...register(`custom_fields.${index}.name` as const)}
+          />
+        </div>
+      ))}
+
+      {/* <div>
         <InputHeading>
           Who recruited you to join the Breakaway team? (Please list name of
           Person if applicable)
@@ -133,7 +191,7 @@ export default function InfluncerForm() {
           Are you a current student? Which college / university do you attend?
         </InputHeading>
         <Input placeholder="Your answer" type="text" />
-      </div>
+      </div> */}
 
       <div className="md:flex md:justify-end my-3">
         <Button

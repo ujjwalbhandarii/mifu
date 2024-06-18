@@ -1,7 +1,7 @@
 import Image from "next/image";
-import InfluncerForm from "@/components/influncerForm";
+import TestForm from "@/components/testForm";
 
-export default function Home() {
+export default async function Home() {
   return (
     <main className="container">
       <nav className="flex items-center justify-center py-5 md:py-7">
@@ -13,7 +13,7 @@ export default function Home() {
             width={300}
             quality={100}
             priority
-            className="max-h-[2.1rem] md:max-h-[3rem]"
+            className="max-h-[2.1rem] md:max-h-[3rem] w-auto"
           />
         </figure>
         <span className="mx-2 md:mx-5 text-lg font-bold">X</span>
@@ -45,7 +45,8 @@ export default function Home() {
           chance to be considered!
         </p>
       </section>
-      <InfluncerForm />
+      {/* <InfluncerForm campaignFormFields={campaignFormFields} /> */}
+      <TestForm campaignId={"test"} />
     </main>
   );
 }
