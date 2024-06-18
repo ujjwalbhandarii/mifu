@@ -1,197 +1,184 @@
 "use client";
 
 import Image from "next/image";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { InfluencerCampaignForm, getCampaignForm } from "@/lib/api";
 
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { InfluencerCampaignForm } from "@/lib/api";
 
-export default function InfluncerForm({
-  campaignFormFields,
-}: {
-  campaignFormFields: InfluencerCampaignForm;
-}) {
-  const { register, handleSubmit, control } = useForm<InfluencerCampaignForm>({
+export default function InfluencerForm({ campaignId }: { campaignId: string }) {
+  const {
+    data: campaignFormFields,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryFn: async () => await getCampaignForm(campaignId),
+    queryKey: ["campaignFormFields"],
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<InfluencerCampaignForm>({
     defaultValues: {
       default_fields: [],
       socials: [],
-      custom_fields: campaignFormFields.custom_fields,
+      custom_fields: [],
     },
   });
 
-  // console.log(campaignFormFields);
+  async function formSubmitFn(data: any) {
+    const formattedData: InfluencerCampaignForm = {
+      default_fields: [
+        data.default_fields[0] || "",
+        data.default_fields[1] || "",
+        data.default_fields[2] || "",
+      ],
+      socials: data.socials.map((social: string) => social || ""),
+      custom_fields:
+        campaignFormFields?.custom_fields.map((field, index) => ({
+          ...field,
+          answer: data.custom_fields[index]?.answer || "",
+        })) || [],
+    };
 
-  const { fields } = useFieldArray({
-    name: "custom_fields",
-    control,
-  });
-
-  async function formSubmitFn(data: InfluencerCampaignForm) {
-    console.log(data);
+    console.log("FORM SUBMITTED: ", formattedData);
   }
+
+  if (isLoading) return <div className="min-h-screen">Loading...</div>;
+
+  if (isError)
+    return (
+      <div className="min-h-screen text-red-500">
+        Failed to fetch campaign form fields. TRY REFRESHING BROWSER!!!
+      </div>
+    );
 
   return (
     <form
-      className="flex flex-col gap-6 md:gap-7 mx-auto lg:w-[60%] my-10 md:my-20"
+      className="flex flex-col gap-6 md:gap-7 mx-auto lg:w-[65%] my-10 md:my-20 form-shadow md:p-10 rounded-3xl"
       onSubmit={handleSubmit(formSubmitFn)}
     >
       <h2 className="text-base font-semibold">Apply Now</h2>
 
-      <div>
-        <InputHeading>Name</InputHeading>
-        <Input
-          placeholder="Your Name"
-          type="text"
-          {...register("default_fields.0.")}
-        />
-      </div>
+      {campaignFormFields?.default_fields.includes("name") && (
+        <div>
+          <InputHeading>Name</InputHeading>
+          <Input
+            placeholder="Your Name"
+            type="text"
+            {...register("default_fields.0", { required: true })}
+          />
+          {errors.default_fields?.[0] && (
+            <ErrorSpan>This field is required</ErrorSpan>
+          )}
+        </div>
+      )}
 
-      <div>
-        <InputHeading>Email</InputHeading>
-        <Input
-          placeholder="Your email"
-          type="email"
-          {...register("default_fields.1")}
-        />
-      </div>
+      {campaignFormFields?.default_fields.includes("email") && (
+        <div>
+          <InputHeading>Email</InputHeading>
+          <Input
+            placeholder="Your email"
+            type="email"
+            {...register("default_fields.1", { required: true })}
+          />
+          {errors.default_fields?.[1] && (
+            <ErrorSpan>This field is required</ErrorSpan>
+          )}
+        </div>
+      )}
 
-      <div>
-        <InputHeading>Phone Number</InputHeading>
-        <Input
-          placeholder="Your phone number"
-          type="tel"
-          {...register("default_fields.2")}
-        />
-      </div>
+      {campaignFormFields?.default_fields.includes("phone") && (
+        <div>
+          <InputHeading>Phone Number</InputHeading>
+          <Input
+            placeholder="Your phone number"
+            type="tel"
+            {...register("default_fields.2", { required: true })}
+          />
+          {errors.default_fields?.[2] && (
+            <ErrorSpan>This field is required</ErrorSpan>
+          )}
+        </div>
+      )}
 
       <div>
         <InputHeading>Your Socials</InputHeading>
         <div className="flex flex-col gap-6">
-          <div className="flex gap-3 items-center">
-            <figure>
-              <Image
-                src="/images/instagram.png"
-                alt="instagram logo"
-                height={40}
-                width={40}
-                className="aspect-square"
-              />
-            </figure>
-            <div className="w-full relative">
-              <Input
-                placeholder="Instagram Username"
-                type="text"
-                className="px-9"
-                {...register("socials.0")}
-              />
-              <AtherateSymbol />
+          {campaignFormFields?.socials.map((social, index) => (
+            <div key={social}>
+              <div className="flex gap-3 items-center">
+                <figure>
+                  <Image
+                    src={`/images/${social}.png`}
+                    alt={`${social} logo`}
+                    height={40}
+                    width={40}
+                    className="aspect-square"
+                  />
+                </figure>
+                <div className="w-full relative">
+                  <Input
+                    placeholder={`${
+                      social.charAt(0).toUpperCase() + social.slice(1)
+                    } Username`}
+                    type="text"
+                    className="px-9"
+                    {...register(`socials.${index}`, { required: true })}
+                  />
+                  <AtherateSymbol />
+                </div>
+              </div>
+              {errors.socials?.[index] && (
+                <ErrorSpan>This field is required</ErrorSpan>
+              )}
             </div>
-          </div>
-
-          <div className="flex gap-3 items-center">
-            <figure>
-              <Image
-                src="/images/tiktok.png"
-                alt="instagram logo"
-                height={40}
-                width={40}
-                className="aspect-square"
-              />
-            </figure>
-            <div className="w-full relative">
-              <Input
-                placeholder="Tiktok Username"
-                type="text"
-                className="px-9"
-                {...register("socials.1")}
-              />
-              <AtherateSymbol />
-            </div>
-          </div>
-
-          <div className="flex gap-3 items-center">
-            <figure>
-              <Image
-                src="/images/twitter.png"
-                alt="instagram logo"
-                height={40}
-                width={40}
-                className="aspect-square"
-              />
-            </figure>
-            <div className="w-full relative">
-              <Input
-                placeholder="Twitter Username"
-                type="text"
-                className="px-9"
-                {...register("socials.2")}
-              />
-              <AtherateSymbol />
-            </div>
-          </div>
-
-          <div className="flex gap-3 items-center">
-            <figure>
-              <Image
-                src="/images/youtube.png"
-                alt="instagram logo"
-                height={40}
-                width={40}
-                className="aspect-square"
-              />
-            </figure>
-            <div className="w-full relative">
-              <Input
-                placeholder="Youtube Username"
-                type="text"
-                className="px-9"
-                {...register("socials.3")}
-              />
-              <AtherateSymbol />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {fields.map((field, index) => (
-        <div key={field.id}>
+      {campaignFormFields?.custom_fields.map((field, index) => (
+        <div key={field.name}>
           <InputHeading>{field.question}</InputHeading>
-          <Input
-            placeholder="Your answer"
-            type="text"
-            {...register(`custom_fields.${index}.name` as const)}
-          />
+          {field.type === "boolean" ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="radio"
+                id={`custom_fields.${index}.yes`}
+                value="yes"
+                {...register(`custom_fields.${index}.answer`, {
+                  required: field.is_required,
+                })}
+              />
+              <label htmlFor={`custom_fields.${index}.yes`}>Yes</label>
+              <input
+                type="radio"
+                id={`custom_fields.${index}.no`}
+                value="no"
+                {...register(`custom_fields.${index}.answer`, {
+                  required: field.is_required,
+                })}
+              />
+              <label htmlFor={`custom_fields.${index}.no`}>No</label>
+            </div>
+          ) : (
+            <Input
+              placeholder="Your answer"
+              type="text"
+              {...register(`custom_fields.${index}.answer`, {
+                required: field.is_required,
+              })}
+            />
+          )}
+          {errors.custom_fields?.[index]?.answer && (
+            <ErrorSpan>This field is required</ErrorSpan>
+          )}
         </div>
       ))}
-
-      {/* <div>
-        <InputHeading>
-          Who recruited you to join the Breakaway team? (Please list name of
-          Person if applicable)
-        </InputHeading>
-        <Input placeholder="Your answer" type="text" />
-      </div>
-
-      <div>
-        <InputHeading>
-          Please provide the promo code you would like to share with your
-          friends!
-        </InputHeading>
-        <Input placeholder="Your answer" type="text" />
-      </div>
-
-      <div>
-        <InputHeading>Are you a member of a Greek organization?</InputHeading>
-        <Input placeholder="Your answer" type="text" />
-      </div>
-
-      <div>
-        <InputHeading>
-          Are you a current student? Which college / university do you attend?
-        </InputHeading>
-        <Input placeholder="Your answer" type="text" />
-      </div> */}
 
       <div className="md:flex md:justify-end my-3">
         <Button
@@ -215,4 +202,8 @@ function AtherateSymbol() {
 
 function InputHeading({ children }: { children: React.ReactNode }) {
   return <p className="text-sm font-normal pb-2">{children}</p>;
+}
+
+function ErrorSpan({ children }: { children: React.ReactNode }) {
+  return <p className="text-red-500 text-sm font-normal pt-2">{children}</p>;
 }

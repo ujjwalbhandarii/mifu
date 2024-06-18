@@ -1,10 +1,10 @@
 import Image from "next/image";
-import TestForm from "@/components/testForm";
+import InfluencerForm from "@/components/influncerForm";
 
 export default async function Home() {
   return (
-    <main className="container">
-      <nav className="flex items-center justify-center py-5 md:py-7">
+    <>
+      <nav className="flex items-center justify-center py-5 md:py-7 nav-shadow px-5">
         <figure>
           <Image
             src="/images/breakaway_logo.png"
@@ -29,24 +29,26 @@ export default async function Home() {
           />
         </figure>
       </nav>
-      <section className="flex items-center justify-center gap-3 flex-col text-center my-4 md:my-10 lg:max-w-[70%] mx-auto">
-        <h1 className="text-2xl font-extrabold leading-tight tracking-wide md:mb-3 max-w-[20rem] md:max-w-[40rem]">
-          Become an Influencer For Breakaway x Mifu
-        </h1>
-        <p className="text-base font-medium">
-          Whether you&apos;re the person with the most likes or followers on
-          campus, or a hard-worker looking to build your network and gain
-          marketing experience, we want to HEAR from you.
-        </p>
-        <p className="text-base font-medium">
-          Becoming a part of the Breakaway Influencer and Ambassador team is
-          pretty simple. Just apply by selecting your preferred market below.
-          Complete your application and attach your Instagram handle for a
-          chance to be considered!
-        </p>
-      </section>
-      {/* <InfluncerForm campaignFormFields={campaignFormFields} /> */}
-      <TestForm campaignId={"test"} />
-    </main>
+
+      <main className="container">
+        <section className="flex items-center justify-center gap-3 flex-col text-center my-4 md:my-10 lg:max-w-[70%] mx-auto">
+          <h1 className="text-2xl font-extrabold leading-tight tracking-wide md:mb-3 max-w-[20rem] md:max-w-[40rem]">
+            Become an Influencer For Breakaway x Mifu
+          </h1>
+          <p className="text-base font-medium">
+            Whether you&apos;re the person with the most likes or followers on
+            campus, or a hard-worker looking to build your network and gain
+            marketing experience, we want to HEAR from you.
+          </p>
+          <p className="text-base font-medium">
+            Becoming a part of the Breakaway Influencer and Ambassador team is
+            pretty simple. Just apply by selecting your preferred market below.
+            Complete your application and attach your Instagram handle for a
+            chance to be considered!
+          </p>
+        </section>
+        <InfluencerForm campaignId={"test"} />
+      </main>
+    </>
   );
 }
